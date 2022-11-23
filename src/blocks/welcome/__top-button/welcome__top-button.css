@@ -1,0 +1,22 @@
+.welcome__top-button {
+  font-family: 'Inter', 'Arial', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.22;
+  color: #FFF;
+  text-decoration: none;
+  position: absolute;
+  top: 45px;
+  right: 27px;
+}
+
+.welcome__top-button:hover {
+  opacity: 0.6;
+}
+
+
+@media screen and (max-width: 940px) {
+  .welcome__top-button {
+    top: 28px;
+  }
+}

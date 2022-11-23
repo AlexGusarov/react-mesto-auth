@@ -51,3 +51,10 @@
 @import url(./blocks/profile/__avatar-icon/profile__avatar-icon.css);
 @import url(./blocks/profile/__avatar-overlay/profile__avatar-overlay.css);
 @import url(./blocks/popup/__container/_type/popup__container_type_avatar.css);
+@import url(./blocks/welcome/welcome.css);
+@import url(./blocks/welcome/__top-button/welcome__top-button.css);
+@import url(./blocks/welcome/__title/welcome__title.css);
+@import url(./blocks/welcome/__input/welcome__input.css);
+@import url(./blocks/welcome/__container/welcome__container.css);
+@import url(./blocks/welcome/__button-submit/welcome__button-submit.css);
+@import url(./blocks/welcome/__link-to-signin/welcome__link-to-signin.css);

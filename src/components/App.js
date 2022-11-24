@@ -9,7 +9,8 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import Login from "./Login";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -18,6 +19,7 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -113,7 +115,10 @@ function App() {
                 <Route path="/sign-up">
                   <Register />
                 </Route>
-                <Route exact path="/">
+                <Route path="/sign-in">
+                  <Login />
+                </Route>
+                <Route path="/lenta">
                   <Main
                     onEditAvatar={handleEditAvatarClick}
                     onEditProfile={handleEditProfileClick}
@@ -123,6 +128,9 @@ function App() {
                     onCardLike={handleCardLike}
                     onCardDelete={handleCardDelete}
                   />
+                </Route>
+                <Route exact path="/">
+                  {loggedIn ? <Redirect to="/lenta" /> : <Redirect to="/sign-in" />}
                 </Route>
                 <Footer />
               </Switch>

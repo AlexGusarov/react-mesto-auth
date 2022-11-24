@@ -7,7 +7,7 @@ function Register({ handleSubmit }) {
   return (
     <>
       <Welcome
-        link="/sign-in"
+        link="/sign-up"
         textLink="Войти"
         title="Регистрация"
         textButton="Зарегистрироваться"

@@ -11,6 +11,7 @@ import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Login from "./Login";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -112,23 +113,26 @@ function App() {
             <div className="page text-smoothing">
               <Header />
               <Switch>
-                <Route path="/sign-up">
+                <Route path="/signup">
                   <Register />
                 </Route>
-                <Route path="/sign-in">
+                <Route path="/signin">
                   <Login />
                 </Route>
-                <Route path="/lenta">
-                  <Main
-                    onEditAvatar={handleEditAvatarClick}
-                    onEditProfile={handleEditProfileClick}
-                    onAddPlace={handleAddPlaceClick}
-                    onCardClick={handleCardClick}
-                    cards={cards}
-                    onCardLike={handleCardLike}
-                    onCardDelete={handleCardDelete}
-                  />
-                </Route>
+                {/* <ProtectedRoute
+                  path="/lenta"
+                  component={Main}
+                  loggedIn={loggedIn}
+                /> */}
+                <Main
+                  onEditAvatar={handleEditAvatarClick}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                />
                 <Route exact path="/">
                   {loggedIn ? <Redirect to="/lenta" /> : <Redirect to="/sign-in" />}
                 </Route>

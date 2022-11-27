@@ -13,7 +13,7 @@ import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router
 import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
 import InfoToolTip from "./InfoTooltip";
-import { register, authorize } from "./Auth";
+import { register, authorize, getContent } from "./Auth";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -33,6 +33,7 @@ function App() {
     }
   )
 
+
   React.useEffect(() => {
     api.getInitialCards()
       .then((res) => setCards(res))
@@ -40,6 +41,7 @@ function App() {
         console.log(`Произошла ошибка с получением данных карточек - ${err}`)
       })
   }, [])
+
 
   React.useEffect(() => {
     api.getUserInfo()
@@ -50,6 +52,12 @@ function App() {
         console.log(`Произошла ошибка с получением данных о пользователе - ${err}`);
       })
   }, []);
+
+
+  React.useEffect(() => {
+    tokenCheck();
+  }, [])
+
 
   function handleInputWelcomeChange(e) {
     const { name, value } = e.target;
@@ -70,6 +78,7 @@ function App() {
       .catch((err) => { console.log(`Не получилось поставить лайк - ${err}`) });
   }
 
+
   function handleCardDelete(card) {
     api.deleteCard(card._id)
       .then((res) => {
@@ -80,17 +89,21 @@ function App() {
       .catch((err) => console.log(`Карта не удалилась - ${err}`));
   }
 
+
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
   }
+
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
   }
 
+
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
   }
+
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
@@ -99,9 +112,11 @@ function App() {
     setSelectedCard({});
   }
 
+
   function handleCardClick(selectedCard) {
     setSelectedCard(selectedCard);
   }
+
 
   function handleUpdateUser(data) {
     api.editProfile(data)
@@ -112,12 +127,14 @@ function App() {
       .catch((err) => console.log(`Не удалось обновить данные пользователя — ${err}`));
   }
 
+
   function handleUpdateAvatar(data) {
     api.editAvatar(data)
       .then((res) => setCurrentUser(res))
       .then(() => closeAllPopups())
       .catch((err) => console.log(`Не удалось обновить аватар - ${err}`));
   }
+
 
   function handleAddPlaceSubmit({ name, link }) {
     api.getNewCard({ name, link })
@@ -152,6 +169,7 @@ function App() {
     setLoggedIn(true);
   }
 
+
   function handleLoginSubmit(evt) {
     evt.preventDefault();
 
@@ -172,6 +190,26 @@ function App() {
   }
 
 
+  function tokenCheck() {
+    if (localStorage.getItem('token')) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        getContent(token).then((res) => {
+          if (res) {
+            setLoggedIn(true, () => {
+              hist.push('/');
+            })
+          }
+        })
+      }
+    }
+  }
+
+
+  function onSignOut() {
+    localStorage.removeItem('token');
+  }
+
 
   return (
     <BrowserRouter>
@@ -179,7 +217,7 @@ function App() {
         <div className="App">
           <div className="root">
             <div className="page text-smoothing">
-              <Header />
+              <Header onSignout={onSignOut} />
               <Switch>
                 <Route path="/sign-up">
                   <Register
@@ -218,12 +256,13 @@ function App() {
               <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
               <ImagePopup
                 card={selectedCard}
-                onClose={closeAllPopups} />
+                onClose={closeAllPopups}
+              />
               <InfoToolTip
                 onClose={closeAllPopups}
-                isOpen={setIsInfoToolTipOpen}
-                status={infoToolTipStatus} />
-
+                isOpen={isInfoToolTipOpen}
+                status={infoToolTipStatus}
+              />
             </div>
           </div>
         </div>

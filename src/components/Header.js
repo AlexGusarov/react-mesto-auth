@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Link } from "react-router-dom";
 import logo from "../images/logo.svg"
 
-function Header({ email, onSignout }) {
+function Header({ email, onSignOut }) {
   return (
     <header className="header">
       <img src={logo} alt="Место" className="header__logo" />
@@ -12,18 +12,17 @@ function Header({ email, onSignout }) {
       <Route exact path="/sign-in">
         <Link to="/sign-up" className="header__link">Регистрация</Link>
       </Route>
-
-      {/* <Route exact path="/">
+      <Route exact path="/">
         <div className="header__userinfo">
           <p className="header__login">{email}</p>
           <Link
             to="/sign-in"
             className="header__link"
-            onChange={onSignout}>
+            onClick={onSignOut}>
             Выйти
           </Link>
         </div>
-      </Route> */}
+      </Route>
 
     </header>
   )

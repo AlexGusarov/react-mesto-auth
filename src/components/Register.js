@@ -3,14 +3,14 @@ import { withRouter } from 'react-router-dom';
 import Welcome from './Welcome';
 
 
-function Register({ handleSubmit }) {
+function Register({ handleChange, handleSubmit }) {
   return (
     <>
       <Welcome
         link="/sign-up"
-        textLink="Войти"
         title="Регистрация"
         textButton="Зарегистрироваться"
+        handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
     </>

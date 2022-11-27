@@ -9,9 +9,11 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router-dom";
 import Login from "./Login";
 import ProtectedRoute from "./ProtectedRoute";
+import InfoToolTip from "./InfoTooltip";
+import { register, authorize } from "./Auth";
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
@@ -21,6 +23,15 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
+  const [infoToolTipStatus, setInfoToolTipStatus] = React.useState("");
+  const hist = useHistory();
+  const [userData, setUserData] = React.useState(
+    {
+      email: '',
+      password: ''
+    }
+  )
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -39,6 +50,16 @@ function App() {
         console.log(`Произошла ошибка с получением данных о пользователе - ${err}`);
       })
   }, []);
+
+  function handleInputWelcomeChange(e) {
+    const { name, value } = e.target;
+    setUserData(
+      {
+        ...userData,
+        [name]: value
+      })
+  }
+
 
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -105,6 +126,53 @@ function App() {
       .catch((err) => console.log(`Не удалось загрузить новую карточку - ${err}`));
   }
 
+
+  function handleRegisterSubmit(evt) {
+    evt.preventDefault();
+
+    const { email, password } = userData;
+    register(email, password)
+      .then((res) => {
+        if (res) {
+          setIsInfoToolTipOpen(true);
+          setInfoToolTipStatus('ok');
+          hist.push('/sign-in');
+        }
+        else {
+          setIsInfoToolTipOpen(true);
+          setInfoToolTipStatus('Что-то пошло не так :(');
+        }
+      })
+      .catch((err) => console.log(err))
+  }
+
+
+  function handleLogin(evt) {
+    evt.preventDefault();
+    setLoggedIn(true);
+  }
+
+  function handleLoginSubmit(evt) {
+    evt.preventDefault();
+
+    if (!userData.email || !userData.password) {
+      return;
+    }
+
+    authorize(userData.email, userData.password)
+      .then((data) => {
+        if (data.token) {
+          setUserData({ email: '', password: '' }, () => {
+            handleLogin();
+            hist.push('/');
+          })
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+
+
   return (
     <BrowserRouter>
       <CurrentUserContext.Provider value={currentUser}>
@@ -113,37 +181,48 @@ function App() {
             <div className="page text-smoothing">
               <Header />
               <Switch>
-                <Route path="/signup">
-                  <Register />
+                <Route path="/sign-up">
+                  <Register
+                    userData={userData}
+                    handleChange={handleInputWelcomeChange}
+                    handleSubmit={handleRegisterSubmit}
+                  />
                 </Route>
-                <Route path="/signin">
-                  <Login />
+                <Route path="/sign-in">
+                  <Login
+                    handleChange={handleInputWelcomeChange}
+                    handleSubmit={handleLoginSubmit}
+                  />
                 </Route>
-                {/* <ProtectedRoute
-                  path="/lenta"
-                  component={Main}
-                  loggedIn={loggedIn}
-                /> */}
-                <Main
-                  onEditAvatar={handleEditAvatarClick}
-                  onEditProfile={handleEditProfileClick}
-                  onAddPlace={handleAddPlaceClick}
-                  onCardClick={handleCardClick}
-                  cards={cards}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
+                <ProtectedRoute
+                  exact path="/"
+                  component={
+                    <Main
+                      onEditAvatar={handleEditAvatarClick}
+                      onEditProfile={handleEditProfileClick}
+                      onAddPlace={handleAddPlaceClick}
+                      onCardClick={handleCardClick}
+                      cards={cards}
+                      onCardLike={handleCardLike}
+                      onCardDelete={handleCardDelete}
+                      loggedIn={loggedIn}
+                    />}
                 />
-                <Route exact path="/">
-                  {loggedIn ? <Redirect to="/lenta" /> : <Redirect to="/sign-in" />}
-                </Route>
-                <Footer />
               </Switch>
+              <Footer />
+              <Route exact path="/">
+                {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+              </Route>
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
               <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
               <ImagePopup
                 card={selectedCard}
                 onClose={closeAllPopups} />
+              <InfoToolTip
+                onClose={closeAllPopups}
+                isOpen={setIsInfoToolTipOpen}
+                status={infoToolTipStatus} />
 
             </div>
           </div>

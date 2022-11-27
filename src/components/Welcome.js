@@ -1,28 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Welcome({ link, textLink, title, textButton, handleSubmit }) {
-  const [userData, setUserData] = React.useState(
-    {
-      email: '',
-      password: ''
-    }
-  )
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(
-      {
-        ...userData,
-        [name]: value
-      })
-  }
-
+function Welcome({ link, title, textButton, handleSubmit, handleChange, userData }) {
 
   return (
     <div className="welcome">
       <div className="welcome__container">
-        <Link className="button welcome__top-button" to={link}>{textLink}</Link>
         <p className="welcome__title">{title}</p>
         <form className="welcome__form" onSubmit={handleSubmit}>
           <input

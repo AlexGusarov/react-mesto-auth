@@ -1,15 +1,15 @@
 import React from "react";
 import Welcome from "./Welcome";
 
-function Login({ handleSubmit }) {
+function Login({ handleSubmit, handleChange }) {
 
   return (
     <>
       <Welcome
-        link="/sign-in"
         textLink="Регистрация"
         title="Войти"
         textButton="Войти"
+        handleChange={handleChange}
         handleSubmit={handleSubmit}
       />
     </>

@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -11,52 +11,29 @@ import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
 import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router-dom";
 import Login from "./Login";
-import ProtectedRoute from "./ProtectedRoute";
+import { ProtectedRoute } from "./ProtectedRoute";
 import InfoToolTip from "./InfoTooltip";
-import { register, authorize, getContent } from "./Auth";
+import * as auth from "../utils/auth";
 
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState({});
-  const [currentUser, setCurrentUser] = React.useState({});
-  const [cards, setCards] = React.useState([]);
-  const [loggedIn, setLoggedIn] = React.useState(false);
-  const [isInfoToolTipOpen, setIsInfoToolTipOpen] = React.useState(false);
-  const [infoToolTipStatus, setInfoToolTipStatus] = React.useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState({});
+  const [currentUser, setCurrentUser] = useState({});
+  const [cards, setCards] = useState([]);
+  const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
+  const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
   const hist = useHistory();
-  const [userData, setUserData] = React.useState(
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(
     {
       email: '',
       password: ''
     }
   )
-
-
-  React.useEffect(() => {
-    api.getInitialCards()
-      .then((res) => setCards(res))
-      .catch((err) => {
-        console.log(`Произошла ошибка с получением данных карточек - ${err}`)
-      })
-  }, [])
-
-
-  React.useEffect(() => {
-    api.getUserInfo()
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch((err) => {
-        console.log(`Произошла ошибка с получением данных о пользователе - ${err}`);
-      })
-  }, []);
-
-
-  React.useEffect(() => {
-    tokenCheck();
-  }, [])
+  let token = localStorage.getItem('token');
 
 
   function handleInputWelcomeChange(e) {
@@ -144,70 +121,98 @@ function App() {
   }
 
 
-  function handleRegisterSubmit(evt) {
-    evt.preventDefault();
-
-    const { email, password } = userData;
-    register(email, password)
-      .then((res) => {
-        if (res) {
-          setIsInfoToolTipOpen(true);
-          setInfoToolTipStatus('ok');
-          hist.push('/sign-in');
-        }
-        else {
-          setIsInfoToolTipOpen(true);
-          setInfoToolTipStatus('Что-то пошло не так :(');
-        }
-      })
-      .catch((err) => console.log(err))
-  }
-
-
-  function handleLogin(evt) {
-    evt.preventDefault();
-    setLoggedIn(true);
-  }
-
-
-  function handleLoginSubmit(evt) {
-    evt.preventDefault();
-
-    if (!userData.email || !userData.password) {
-      return;
-    }
-
-    authorize(userData.email, userData.password)
-      .then((data) => {
-        if (data.token) {
-          setUserData({ email: '', password: '' }, () => {
-            handleLogin();
-            hist.push('/');
-          })
-        }
-      })
-      .catch((err) => console.log(err));
-  }
-
-
-  function tokenCheck() {
-    if (localStorage.getItem('token')) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        getContent(token).then((res) => {
-          if (res) {
-            setLoggedIn(true, () => {
-              hist.push('/');
-            })
-          }
-        })
-      }
-    }
-  }
-
-
   function onSignOut() {
     localStorage.removeItem('token');
+  }
+
+  const tokenCheck = useCallback(async () => {
+    try {
+      setLoading(true);
+      if (!token) {
+        throw new Error('Нет токена')
+      }
+
+      const userInfo = await auth.checkToken(token);
+      if (!userInfo) {
+        throw new Error('Нет юзера');
+      }
+
+      if (userInfo) {
+        setLoggedIn(true);
+      }
+    } catch { }
+    finally { setLoading(false) }
+  }, []);
+
+  const cbAuthenticate = useCallback((data) => {
+    localStorage.setItem('token', data.token);
+    setLoggedIn(true);
+  }, []);
+
+  const cbRegister = useCallback(async (email, password) => {
+    try {
+      setLoading(true);
+      console.log(email, password, 'cbRegister')
+      const data = await auth.register(email, password);
+      console.log(data);
+      cbAuthenticate(data);
+      return data;
+    } catch (err) { console.log(err) }
+    finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const cbLogin = useCallback(async (login, password) => {
+    try {
+      setLoading(true);
+      const data = await auth.authorize(login, password);
+      if (!data) {
+        throw new Error('Неверные логин или пароль')
+      }
+      if (data.token) {
+        setLoggedIn(true);
+        localStorage.setItem('token', data.token);
+      }
+    } catch { }
+    finally {
+      setLoading(false)
+    }
+
+  }, []);
+
+
+  useEffect(() => {
+    if (token) {
+      api.getInitialCards()
+        .then((res) => setCards(res))
+        .catch((err) => {
+          console.log(`Произошла ошибка с получением данных карточек - ${err}`)
+        })
+    }
+  }, [loggedIn])
+
+
+  useEffect(() => {
+    if (token) {
+      api.getUserInfo()
+        .then((res) => {
+          setCurrentUser(res);
+        })
+        .catch((err) => {
+          console.log(`Произошла ошибка с получением данных о пользователе - ${err}`);
+        })
+    }
+  }, [loggedIn]);
+
+
+  useEffect(() => {
+    tokenCheck();
+  }, [tokenCheck])
+
+
+  if (loading) {
+    return '...Загрузка'
   }
 
 
@@ -223,17 +228,19 @@ function App() {
                   <Register
                     userData={userData}
                     handleChange={handleInputWelcomeChange}
-                    handleSubmit={handleRegisterSubmit}
+                    onRegister={cbRegister}
                   />
                 </Route>
                 <Route path="/sign-in">
                   <Login
                     handleChange={handleInputWelcomeChange}
-                    handleSubmit={handleLoginSubmit}
+                    onLogin={cbLogin}
+                    userData={userData}
                   />
                 </Route>
                 <ProtectedRoute
                   exact path="/"
+                  loggedIn={loggedIn}
                   component={
                     <Main
                       onEditAvatar={handleEditAvatarClick}
@@ -248,7 +255,8 @@ function App() {
                 />
               </Switch>
               <Footer />
-              <Route exact path="/">
+              <Route path="*">
+                {console.log("Redirect loggenIn", loggedIn)}
                 {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
               </Route>
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />

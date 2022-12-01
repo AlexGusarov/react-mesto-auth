@@ -1,7 +1,16 @@
 import React from "react";
 import Welcome from "./Welcome";
 
-function Login({ handleSubmit, handleChange }) {
+function Login({ onLogin, handleChange, userData }) {
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    let { email, password } = userData;
+    if (!email || !password) {
+      return;
+    }
+    onLogin(email, password);
+  }
 
   return (
     <>
@@ -11,6 +20,7 @@ function Login({ handleSubmit, handleChange }) {
         textButton="Войти"
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        userData={userData}
       />
     </>
   )

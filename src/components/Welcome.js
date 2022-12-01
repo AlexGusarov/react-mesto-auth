@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 function Welcome({ link, title, textButton, handleSubmit, handleChange, userData }) {
 
@@ -28,7 +27,6 @@ function Welcome({ link, title, textButton, handleSubmit, handleChange, userData
           </input>
           <button type="submit" className="welcome__button-submit button">{textButton}</button>
         </form>
-        <Link to={link} className="welcome__link-to-signin button">Уже зарегистрированы? Войти</Link>
       </div>
     </div>
   )

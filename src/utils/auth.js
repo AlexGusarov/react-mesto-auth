@@ -13,15 +13,15 @@ export const register = (email, password) => {
     .then(checkResponse)
 };
 
-export const authorize = (id, password) => {
-  console.log(id, password, 'in auth')
+export const authorize = (email, password) => {
+  console.log(email, password, 'in auth')
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ id, password })
+    body: JSON.stringify({ email, password })
   })
     .then(checkResponse)
 }

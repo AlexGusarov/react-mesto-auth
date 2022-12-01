@@ -14,6 +14,7 @@ function Register({ handleChange, onRegister, userData, loggedIn }) {
     }
     console.log(email, password, 'handleSubmit in Register')
     onRegister(email, password);
+    evt.target.reset();
   }
 
 

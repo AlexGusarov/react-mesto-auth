@@ -140,7 +140,7 @@ function App() {
       if (userInfo) {
         setLoggedIn(true);
       }
-    } catch { }
+    } catch (err) { console.log(err) }
     finally { setLoading(false) }
   }, []);
 
@@ -174,7 +174,7 @@ function App() {
         setLoggedIn(true);
         localStorage.setItem('token', data.token);
       }
-    } catch { }
+    } catch (err) { console.log(err) }
     finally {
       setLoading(false)
     }
@@ -208,7 +208,7 @@ function App() {
 
   useEffect(() => {
     tokenCheck();
-  }, [tokenCheck])
+  }, [tokenCheck, loggedIn])
 
 
   if (loading) {

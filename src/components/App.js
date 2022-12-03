@@ -12,8 +12,9 @@ import Register from "./Register";
 import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router-dom";
 import Login from "./Login";
 import { ProtectedRoute } from "./ProtectedRoute";
-import InfoToolTip from "./InfoTooltip";
+import InfoToolTip from "./InfoToolTip";
 import * as auth from "../utils/auth";
+
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -155,7 +156,12 @@ function App() {
       setLoading(true);
       console.log(email, password, 'cbRegister')
       const data = await auth.register(email, password);
-      return data;
+      if (data) {
+        setIsInfoToolTipOpen(true);
+        setInfoToolTipStatus('ok');
+      } else {
+        setIsInfoToolTipOpen();
+      }
       console.log('cbRegister', data);
     } catch (err) { console.log(err) }
     finally {

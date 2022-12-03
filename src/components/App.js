@@ -142,9 +142,10 @@ function App() {
       }
     } catch (err) { console.log(err) }
     finally { setLoading(false) }
-  }, []);
+  }, [loggedIn]);
 
   const cbAuthenticate = useCallback((data) => {
+    console.log('data in cbAuthenticate', data)
     localStorage.setItem('token', data.token);
     setLoggedIn(true);
   }, []);
@@ -154,9 +155,8 @@ function App() {
       setLoading(true);
       console.log(email, password, 'cbRegister')
       const data = await auth.register(email, password);
-      console.log(data);
-      cbAuthenticate(data);
       return data;
+      console.log('cbRegister', data);
     } catch (err) { console.log(err) }
     finally {
       setLoading(false);
@@ -164,15 +164,22 @@ function App() {
   }, []);
 
   const cbLogin = useCallback(async (login, password) => {
+    console.log('login and password in cbLogin', login, password)// здесь попадают данные
     try {
       setLoading(true);
       const data = await auth.authorize(login, password);
+      console.log('cbLogin', data) // а здесь underfined
       if (!data) {
         throw new Error('Неверные логин или пароль')
       }
+      console.log('cbLogin', data)
       if (data.token) {
         setLoggedIn(true);
         localStorage.setItem('token', data.token);
+        setUserData({
+          email: '',
+          password: ''
+        })
       }
     } catch (err) { console.log(err) }
     finally {
@@ -180,6 +187,23 @@ function App() {
     }
 
   }, []);
+
+  // function cbLogin(email, password) {
+  //   auth.authorize(email, password)
+  //     .then((data) => {
+  //       console.log('cbLogin token', data)
+  //       if (data.token) {
+  //         setUserData({
+  //           email: '',
+  //           password: ''
+  //         }, () => {
+  //           localStorage.setItem('token', data.token);
+  //           setLoggedIn(true);
+  //         })
+  //       }
+  //     })
+  //     .catch((err) => console.log(err))
+  // }
 
 
   useEffect(() => {

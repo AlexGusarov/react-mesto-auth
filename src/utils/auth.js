@@ -1,7 +1,7 @@
 const BASE_URL = 'https://auth.nomoreparties.co';
 
 export const register = (email, password) => {
-  console.log(email, password, 'in auth')
+  console.log(email, password, 'in register')
   return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: {
@@ -27,7 +27,7 @@ export const authorize = (email, password) => {
 }
 
 export const checkToken = (token) => {
-  fetch(`${BASE_URL}/users/me`, {
+  return fetch(`${BASE_URL}/users/me`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',

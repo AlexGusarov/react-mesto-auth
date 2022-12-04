@@ -197,23 +197,6 @@ function App() {
 
   }, []);
 
-  // function cbLogin(email, password) {
-  //   auth.authorize(email, password)
-  //     .then((data) => {
-  //       console.log('cbLogin token', data)
-  //       if (data.token) {
-  //         setUserData({
-  //           email: '',
-  //           password: ''
-  //         }, () => {
-  //           localStorage.setItem('token', data.token);
-  //           setLoggedIn(true);
-  //         })
-  //       }
-  //     })
-  //     .catch((err) => console.log(err))
-  // }
-
 
   useEffect(() => {
     if (token) {
@@ -274,17 +257,15 @@ function App() {
                 <ProtectedRoute
                   exact path="/"
                   loggedIn={loggedIn}
-                  component={
-                    <Main
-                      onEditAvatar={handleEditAvatarClick}
-                      onEditProfile={handleEditProfileClick}
-                      onAddPlace={handleAddPlaceClick}
-                      onCardClick={handleCardClick}
-                      cards={cards}
-                      onCardLike={handleCardLike}
-                      onCardDelete={handleCardDelete}
-                      loggedIn={loggedIn}
-                    />}
+                  component={Main}
+                  onEditAvatar={handleEditAvatarClick}
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  loggedIn={loggedIn}
                 />
               </Switch>
               <Footer />

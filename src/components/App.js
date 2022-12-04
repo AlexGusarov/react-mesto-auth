@@ -9,7 +9,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
-import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, useLocation } from "react-router-dom";
 import Login from "./Login";
 import { ProtectedRoute } from "./ProtectedRoute";
 import InfoToolTip from "./InfoToolTip";
@@ -26,11 +26,12 @@ function App() {
   const [cards, setCards] = useState([]);
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
   const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
-  const hist = useHistory();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({ email: '', password: '' });
+  const ROUTE_NO_AUTH = ['/sign-in', 'sign-up'];
+  const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
   let token = localStorage.getItem('token');
-
 
   function handleInputWelcomeChange(e) {
     const { name, value } = e.target;
@@ -123,6 +124,7 @@ function App() {
 
 
   function onSignOut() {
+    setLoggedIn(false);
     localStorage.removeItem('token');
   }
 
@@ -236,7 +238,7 @@ function App() {
         <div className="App">
           <div className="root">
             <div className="page text-smoothing">
-              <Header onSignout={onSignOut} />
+              <Header onSignOut={onSignOut} email={userData.email} />
               <Switch>
                 <Route path="/sign-up">
                   <Register
@@ -268,7 +270,7 @@ function App() {
               <Footer />
               <Route path="*">
                 {console.log("Redirect loggenIn", loggedIn)}
-                {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+                {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
               </Route>
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />

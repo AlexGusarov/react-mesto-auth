@@ -61,3 +61,5 @@
 @import url(./blocks/popup/__container-union/popup__container-union.css);
 @import url(./blocks/popup/__union-img/popup__union-img.css);
 @import url(./blocks/popup/__union-text/popup__union-text.css);
+@import url(./blocks/header/__login/header__login.css);
+@import url(./blocks/header/__userinfo/header__userinfo.css);

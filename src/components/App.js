@@ -27,10 +27,13 @@ function App() {
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
   const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
   const location = useLocation();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: '', password: '' });
+
+  // чтобы не было редиректа с Register на Login на обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
+
   let token = localStorage.getItem('token');
 
   function handleInputWelcomeChange(e) {
@@ -41,8 +44,6 @@ function App() {
         [name]: value
       })
   }
-
-
 
 
   function handleCardLike(card) {
@@ -149,15 +150,12 @@ function App() {
   const cbRegister = useCallback(async (email, password) => {
     try {
       setLoading(true);
-      console.log(email, password, 'cbRegister')
       const data = await auth.register(email, password);
       if (data) {
         setIsInfoToolTipOpen(true);
-        console.log('InfoToolTip ok')
         setInfoToolTipStatus('ok');
       } else {
         setIsInfoToolTipOpen(true);
-        console.log('InfoToolTip fail')
       }
       console.log('cbRegister', data);
     } catch (err) { console.log(err) }
@@ -167,15 +165,12 @@ function App() {
   }, []);
 
   const cbLogin = useCallback(async (login, password) => {
-    console.log('login and password in cbLogin', login, password)
     try {
       setLoading(true);
       const data = await auth.authorize(login, password);
-      console.log('cbLogin', data)
       if (!data) {
         throw new Error('Неверные логин или пароль')
       }
-      console.log('cbLogin', data)
       if (data.token) {
         setLoggedIn(true);
         localStorage.setItem('token', data.token);
@@ -184,7 +179,6 @@ function App() {
     finally {
       setLoading(false)
     }
-
   }, []);
 
 
@@ -260,7 +254,6 @@ function App() {
               </Switch>
               <Footer />
               <Route path="*">
-                {console.log("Redirect loggenIn", loggedIn)}
                 {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
               </Route>
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />

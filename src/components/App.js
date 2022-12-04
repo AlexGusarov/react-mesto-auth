@@ -30,12 +30,11 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: '', password: '' });
 
-  // чтобы не было редиректа с Register на Login на обновлении страницы
+  // чтобы не было редиректа с Register на Login при обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
-
   let token = localStorage.getItem('token');
-  let login;
+
 
   function handleInputWelcomeChange(e) {
     const { name, value } = e.target;
@@ -159,7 +158,7 @@ function App() {
       } else {
         setIsInfoToolTipOpen(true);
       }
-      console.log('cbRegister', data);
+
     } catch (err) { console.log(err) }
     finally {
       setLoading(false);
@@ -225,7 +224,6 @@ function App() {
           <div className="root">
             <div className="page text-smoothing">
               <Header onSignOut={onSignOut} email={userData.email} />
-              {console.log(userData.email, 'userData.email')}
               <Switch>
                 <Route path="/sign-up">
                   <Register

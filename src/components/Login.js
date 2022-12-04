@@ -2,7 +2,6 @@ import React from "react";
 import Welcome from "./Welcome";
 
 function Login({ onLogin, handleChange, userData }) {
-  console.log('userData in Login', userData);
   const handleSubmit = (evt) => {
     evt.preventDefault();
     let { email, password } = userData;

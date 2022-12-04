@@ -10,6 +10,7 @@ function Login({ onLogin, handleChange, userData }) {
       return;
     }
     onLogin(email, password);
+    evt.target.reset();
   }
 
   return (

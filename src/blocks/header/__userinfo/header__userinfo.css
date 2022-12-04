@@ -1,6 +1,3 @@
-.header__userinfo.css {
+.header__userinfo {
   display: flex;
-  max-width: 150px;
-  min-width: 50px;
-  background-color: aqua;
 }

@@ -14,7 +14,7 @@ function Header({ email, onSignOut }) {
       </Route>
       <Route exact path="/">
         <div className="header__userinfo">
-          <p className="header__login">`${email}`</p>
+          <p className="header__login">{email}</p>
           <Link
             to="/sign-in"
             className="header__link"

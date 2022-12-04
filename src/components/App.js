@@ -29,7 +29,7 @@ function App() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({ email: '', password: '' });
-  const ROUTE_NO_AUTH = ['/sign-in', 'sign-up'];
+  const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
   let token = localStorage.getItem('token');
 
@@ -42,9 +42,7 @@ function App() {
       })
   }
 
-  function makeUserDataClear() {
-    setUserData({ email: '', password: '' });
-  }
+
 
 
   function handleCardLike(card) {
@@ -164,7 +162,6 @@ function App() {
       console.log('cbRegister', data);
     } catch (err) { console.log(err) }
     finally {
-      makeUserDataClear();
       setLoading(false);
     }
   }, []);
@@ -185,7 +182,6 @@ function App() {
       }
     } catch (err) { console.log(err) }
     finally {
-      makeUserDataClear();
       setLoading(false)
     }
 
@@ -220,12 +216,6 @@ function App() {
     tokenCheck();
   }, [tokenCheck, loggedIn])
 
-  useEffect(() => {
-    makeUserDataClear();
-    console.log('clearing userData')
-  }, [Register, Login])
-
-
 
   if (loading) {
     return '...Загрузка'
@@ -239,6 +229,7 @@ function App() {
           <div className="root">
             <div className="page text-smoothing">
               <Header onSignOut={onSignOut} email={userData.email} />
+              {console.log(userData, 'userData.email')}
               <Switch>
                 <Route path="/sign-up">
                   <Register

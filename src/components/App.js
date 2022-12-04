@@ -87,6 +87,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIsInfoToolTipOpen(false);
     setSelectedCard({});
   }
 
@@ -158,9 +159,11 @@ function App() {
       const data = await auth.register(email, password);
       if (data) {
         setIsInfoToolTipOpen(true);
+        console.log('InfoToolTip ok')
         setInfoToolTipStatus('ok');
       } else {
-        setIsInfoToolTipOpen();
+        setIsInfoToolTipOpen(true);
+        console.log('InfoToolTip fail')
       }
       console.log('cbRegister', data);
     } catch (err) { console.log(err) }

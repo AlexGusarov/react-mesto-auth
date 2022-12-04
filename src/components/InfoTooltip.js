@@ -19,9 +19,9 @@ function InfoToolTip({ isOpen, onClose, status }) {
 
   return (
     <div className={`popup ${isOpen && 'popup_opened'}`} >
-      <div className="popup_container-union">
+      <div className="popup__container-union">
         <button type="button" className="button popup__button-close" aria-label="Close" onClick={onClose}></button>
-        <img className="popup__union-img" src={`${status === 'ok'} ? ${success} : ${fail}`} alt="" />
+        <img className="popup__union-img" src={status === 'ok' ? success : fail} alt="" />
         <p className="popup__union-text">
           {status === 'ok'
             ? 'Вы успешно зарегистрировались!'

@@ -35,6 +35,7 @@ function App() {
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
 
   let token = localStorage.getItem('token');
+  let login;
 
   function handleInputWelcomeChange(e) {
     const { name, value } = e.target;
@@ -141,6 +142,7 @@ function App() {
 
       if (userInfo) {
         setLoggedIn(true);
+        setUserData(userInfo.data);
       }
     } catch (err) { console.log(err) }
     finally { setLoading(false) }
@@ -223,7 +225,7 @@ function App() {
           <div className="root">
             <div className="page text-smoothing">
               <Header onSignOut={onSignOut} email={userData.email} />
-              {console.log(userData, 'userData.email')}
+              {console.log(userData.email, 'userData.email')}
               <Switch>
                 <Route path="/sign-up">
                   <Register

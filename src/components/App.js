@@ -28,12 +28,7 @@ function App() {
   const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
   const hist = useHistory();
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(
-    {
-      email: '',
-      password: ''
-    }
-  )
+  const [userData, setUserData] = useState({ email: '', password: '' });
   let token = localStorage.getItem('token');
 
 
@@ -44,6 +39,10 @@ function App() {
         ...userData,
         [name]: value
       })
+  }
+
+  function makeUserDataClear() {
+    setUserData({ email: '', password: '' });
   }
 
 
@@ -146,11 +145,6 @@ function App() {
     finally { setLoading(false) }
   }, [loggedIn]);
 
-  const cbAuthenticate = useCallback((data) => {
-    console.log('data in cbAuthenticate', data)
-    localStorage.setItem('token', data.token);
-    setLoggedIn(true);
-  }, []);
 
   const cbRegister = useCallback(async (email, password) => {
     try {
@@ -168,16 +162,17 @@ function App() {
       console.log('cbRegister', data);
     } catch (err) { console.log(err) }
     finally {
+      makeUserDataClear();
       setLoading(false);
     }
   }, []);
 
   const cbLogin = useCallback(async (login, password) => {
-    console.log('login and password in cbLogin', login, password)// здесь попадают данные
+    console.log('login and password in cbLogin', login, password)
     try {
       setLoading(true);
       const data = await auth.authorize(login, password);
-      console.log('cbLogin', data) // а здесь underfined
+      console.log('cbLogin', data)
       if (!data) {
         throw new Error('Неверные логин или пароль')
       }
@@ -185,13 +180,10 @@ function App() {
       if (data.token) {
         setLoggedIn(true);
         localStorage.setItem('token', data.token);
-        setUserData({
-          email: '',
-          password: ''
-        })
       }
     } catch (err) { console.log(err) }
     finally {
+      makeUserDataClear();
       setLoading(false)
     }
 
@@ -225,6 +217,12 @@ function App() {
   useEffect(() => {
     tokenCheck();
   }, [tokenCheck, loggedIn])
+
+  useEffect(() => {
+    makeUserDataClear();
+    console.log('clearing userData')
+  }, [Register, Login])
+
 
 
   if (loading) {
@@ -265,7 +263,6 @@ function App() {
                   cards={cards}
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
-                  loggedIn={loggedIn}
                 />
               </Switch>
               <Footer />

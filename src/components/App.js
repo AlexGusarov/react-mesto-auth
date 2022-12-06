@@ -9,7 +9,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
-import { BrowserRouter, Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, useLocation, useHistory } from "react-router-dom";
 import Login from "./Login";
 import { ProtectedRoute } from "./ProtectedRoute";
 import InfoToolTip from "./InfoToolTip";
@@ -27,6 +27,7 @@ function App() {
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
   const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
   const location = useLocation();
+  const hist = useHistory();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: '', password: '' });
 
@@ -152,11 +153,16 @@ function App() {
     try {
       setLoading(true);
       const data = await auth.register(email, password);
+
+      if (data.error || !data) {
+        setIsInfoToolTipOpen(true);
+        console.log('register failed')
+      }
+
       if (data) {
         setIsInfoToolTipOpen(true);
         setInfoToolTipStatus('ok');
-      } else {
-        setIsInfoToolTipOpen(true);
+        hist.push('/sign-in');
       }
 
     } catch (err) { console.log(err) }

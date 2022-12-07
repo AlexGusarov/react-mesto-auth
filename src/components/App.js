@@ -153,19 +153,18 @@ function App() {
     try {
       setLoading(true);
       const data = await auth.register(email, password);
-
-      if (data.error || !data) {
-        setIsInfoToolTipOpen(true);
-        console.log('register failed')
-      }
+      console.log('cbRegister', email, password)
+      console.log(data)
 
       if (data) {
         setIsInfoToolTipOpen(true);
         setInfoToolTipStatus('ok');
+        console.log('ok', 'cbRegister')
         hist.push('/sign-in');
       }
-
-    } catch (err) { console.log(err) }
+    } catch (err) {
+      setIsInfoToolTipOpen(true);
+    }
     finally {
       setLoading(false);
     }
@@ -214,7 +213,9 @@ function App() {
 
 
   useEffect(() => {
-    tokenCheck();
+    if (token) {
+      tokenCheck();
+    }
   }, [tokenCheck, loggedIn])
 
 

@@ -17,7 +17,12 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({ password, email })
   })
-    .then((res) => checkResponse(res))
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
 };
 
 export const authorize = (email, password) => {

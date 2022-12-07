@@ -1,6 +1,6 @@
 import React from "react";
 
-function Welcome({ link, title, textButton, handleSubmit, handleChange, userData }) {
+function Welcome({ title, textButton, handleSubmit, handleChange, userData }) {
 
   return (
     <div className="welcome">
@@ -13,7 +13,7 @@ function Welcome({ link, title, textButton, handleSubmit, handleChange, userData
             name="email"
             id="email"
             placeholder="Email"
-            value={userData.email}
+            value={userData.email || ''}
             onChange={handleChange}>
           </input>
           <input
@@ -22,7 +22,7 @@ function Welcome({ link, title, textButton, handleSubmit, handleChange, userData
             name="password"
             id="password"
             placeholder="Пароль"
-            value={userData.password}
+            value={userData.password || ''}
             onChange={handleChange}>
           </input>
           <button type="submit" className="welcome__button-submit button">{textButton}</button>

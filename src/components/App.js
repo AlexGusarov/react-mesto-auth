@@ -164,6 +164,7 @@ function App() {
       }
     } catch (err) {
       setIsInfoToolTipOpen(true);
+      setInfoToolTipStatus('failed');
     }
     finally {
       setLoading(false);

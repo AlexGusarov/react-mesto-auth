@@ -17,12 +17,7 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({ password, email })
   })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
+    .then((res) => checkResponse(res))
 };
 
 export const authorize = (email, password) => {
@@ -35,7 +30,7 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({ email, password })
   })
-    .then(checkResponse)
+    .then((res) => checkResponse(res))
 }
 
 export const checkToken = (token) => {
@@ -47,6 +42,6 @@ export const checkToken = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-    .then(checkResponse)
+    .then((res) => checkResponse(res))
 }
 

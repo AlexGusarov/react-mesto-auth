@@ -14,6 +14,7 @@ import Login from "./Login";
 import { ProtectedRoute } from "./ProtectedRoute";
 import InfoToolTip from "./InfoToolTip";
 import * as auth from "../utils/auth";
+import { Spinner } from "./Spinner";
 
 
 function App() {
@@ -34,17 +35,8 @@ function App() {
   // чтобы не было редиректа с Register на Login при обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
-  let token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
-
-  // function handleInputWelcomeChange(e) {
-  //   const { name, value } = e.target;
-  //   setUserData(
-  //     {
-  //       ...userData,
-  //       [name]: value
-  //     })
-  // }
 
 
   function handleCardLike(card) {
@@ -128,7 +120,7 @@ function App() {
     localStorage.removeItem('token');
   }
 
-  const tokenCheck = useCallback(async () => {
+  const checkToken = useCallback(async () => {
     try {
       setLoading(true);
       if (!token) {
@@ -215,13 +207,15 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      tokenCheck();
+      checkToken();
     }
-  }, [tokenCheck, loggedIn])
+  }, [token, checkToken])
 
 
   if (loading) {
-    return '...Загрузка'
+    return (
+      <Spinner />
+    )
   }
 
 
@@ -233,6 +227,7 @@ function App() {
             <div className="page text-smoothing">
               <Header onSignOut={onSignOut} email={userData.email} />
               <Switch>
+
                 <Route path="/sign-up">
                   <Register
                     onRegister={registerUser}
@@ -241,7 +236,6 @@ function App() {
                 <Route path="/sign-in">
                   <Login
                     onLogin={enterAccount}
-                    userData={userData}
                   />
                 </Route>
                 <ProtectedRoute
@@ -256,11 +250,14 @@ function App() {
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
                 />
+
               </Switch>
-              <Footer />
               <Route path="*">
+                {console.log('loggedIn in Route', loggedIn)}
                 {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
               </Route>
+
+              <Footer />
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
               <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />

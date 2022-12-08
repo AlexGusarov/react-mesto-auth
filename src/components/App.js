@@ -29,7 +29,7 @@ function App() {
   const location = useLocation();
   const hist = useHistory();
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState({ email: '', password: '' });
+  const [userData, setUserData] = useState({ email: '' });
 
   // чтобы не было редиректа с Register на Login при обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
@@ -37,14 +37,14 @@ function App() {
   let token = localStorage.getItem('token');
 
 
-  function handleInputWelcomeChange(e) {
-    const { name, value } = e.target;
-    setUserData(
-      {
-        ...userData,
-        [name]: value
-      })
-  }
+  // function handleInputWelcomeChange(e) {
+  //   const { name, value } = e.target;
+  //   setUserData(
+  //     {
+  //       ...userData,
+  //       [name]: value
+  //     })
+  // }
 
 
   function handleCardLike(card) {
@@ -149,17 +149,17 @@ function App() {
   }, [loggedIn]);
 
 
-  const cbRegister = useCallback(async (email, password) => {
+  const registerUser = useCallback(async (email, password) => {
     try {
       setLoading(true);
       const data = await auth.register(email, password);
-      console.log('cbRegister', email, password)
+      console.log('registerUser', email, password)
       console.log(data)
 
       if (data) {
         setIsInfoToolTipOpen(true);
         setInfoToolTipStatus('ok');
-        console.log('ok', 'cbRegister')
+        console.log('ok', 'registerUser')
         hist.push('/sign-in');
       }
     } catch (err) {
@@ -171,7 +171,7 @@ function App() {
     }
   }, []);
 
-  const cbLogin = useCallback(async (login, password) => {
+  const enterAccount = useCallback(async (login, password) => {
     try {
       setLoading(true);
       const data = await auth.authorize(login, password);
@@ -235,15 +235,12 @@ function App() {
               <Switch>
                 <Route path="/sign-up">
                   <Register
-                    userData={userData}
-                    handleChange={handleInputWelcomeChange}
-                    onRegister={cbRegister}
+                    onRegister={registerUser}
                   />
                 </Route>
                 <Route path="/sign-in">
                   <Login
-                    handleChange={handleInputWelcomeChange}
-                    onLogin={cbLogin}
+                    onLogin={enterAccount}
                     userData={userData}
                   />
                 </Route>

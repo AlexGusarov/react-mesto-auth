@@ -227,7 +227,6 @@ function App() {
             <div className="page text-smoothing">
               <Header onSignOut={onSignOut} email={userData.email} />
               <Switch>
-
                 <Route path="/sign-up">
                   <Register
                     onRegister={registerUser}
@@ -250,13 +249,11 @@ function App() {
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
                 />
-
               </Switch>
+              {/*внутри Stwitch не работает, а здесь да  */}
               <Route path="*">
-                {console.log('loggedIn in Route', loggedIn)}
                 {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
               </Route>
-
               <Footer />
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />

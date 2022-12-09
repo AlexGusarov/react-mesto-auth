@@ -9,7 +9,7 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Register from "./Register";
-import { BrowserRouter, Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, useLocation, useHistory } from "react-router-dom";
 import Login from "./Login";
 import { ProtectedRoute } from "./ProtectedRoute";
 import InfoToolTip from "./InfoToolTip";
@@ -30,12 +30,11 @@ function App() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: '' });
-
+  const token = localStorage.getItem('token');
+  const history = useHistory();
   // чтобы не было редиректа с Register на Login при обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
-  const token = localStorage.getItem('token');
-
 
 
   function handleCardLike(card) {
@@ -119,6 +118,7 @@ function App() {
     localStorage.removeItem('token');
   }
 
+
   const checkToken = useCallback(async () => {
     try {
       setLoading(true);
@@ -147,6 +147,7 @@ function App() {
       if (data) {
         setIsInfoToolTipOpen(true);
         setInfoToolTipStatus('ok');
+        history.push('/sign-in');
       }
     } catch (err) {
       setIsInfoToolTipOpen(true);
@@ -156,6 +157,7 @@ function App() {
       setLoading(false);
     }
   }, []);
+
 
   const enterAccount = useCallback(async (login, password) => {
     try {
@@ -222,14 +224,10 @@ function App() {
               <Header onSignOut={onSignOut} email={userData.email} />
               <Switch>
                 <Route path="/sign-up">
-                  <Register
-                    onRegister={registerUser}
-                  />
+                  <Register onRegister={registerUser} />
                 </Route>
                 <Route path="/sign-in">
-                  <Login
-                    onLogin={enterAccount}
-                  />
+                  <Login onLogin={enterAccount} />
                 </Route>
                 <ProtectedRoute
                   exact path="/"
@@ -244,7 +242,7 @@ function App() {
                   onCardDelete={handleCardDelete}
                 />
               </Switch>
-              {/*внутри Stwitch не работает, а здесь да  */}
+              {/* Внутри Switch не работает */}
               <Route path="*">
                 {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
               </Route>

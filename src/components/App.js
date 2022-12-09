@@ -32,6 +32,7 @@ function App() {
   const [userData, setUserData] = useState({ email: '' });
   const token = localStorage.getItem('token');
   const history = useHistory();
+  const [registerStatus, setRegisterStatus] = useState(false);
   // чтобы не было редиректа с Register на Login при обновлении страницы
   const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
   const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
@@ -140,14 +141,14 @@ function App() {
   }, [loggedIn]);
 
 
-  const registerUser = useCallback(async (email, password) => {
+  async function registerUser(email, password) {
     try {
       setLoading(true);
       const data = await auth.register(email, password);
       if (data) {
         setIsInfoToolTipOpen(true);
         setInfoToolTipStatus('ok');
-        history.push('/sign-in');
+        setRegisterStatus(true);
       }
     } catch (err) {
       setIsInfoToolTipOpen(true);
@@ -156,7 +157,7 @@ function App() {
     finally {
       setLoading(false);
     }
-  }, []);
+  }
 
 
   const enterAccount = useCallback(async (login, password) => {
@@ -242,9 +243,9 @@ function App() {
                   onCardDelete={handleCardDelete}
                 />
               </Switch>
-              {/* Внутри Switch не работает */}
               <Route path="*">
-                {loggedIn ? <Redirect to="/" /> : !isRouteNoAuth ? <Redirect to="/sign-in" /> : null}
+                {console.log(registerStatus, 'registerStatus')}
+                {loggedIn ? <Redirect to="/" /> : registerStatus ? <Redirect to="/sign-in" /> : null}
               </Route>
               <Footer />
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />

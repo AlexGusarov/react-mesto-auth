@@ -16,12 +16,7 @@ function Header({ email, onSignOut }) {
       {(pathname === '/') &&
         <div className="header__userinfo">
           <p className="header__login">{email}</p>
-          <Link
-            to="/sign-in"
-            className="header__link"
-            onClick={onSignOut}>
-            Выйти
-          </Link>
+          <button className="header__button" onClick={onSignOut}>Выйти</button>
         </div>}
     </header>
   )

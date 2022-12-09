@@ -24,12 +24,10 @@ function Login({ onLogin }) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(formData, 'formData in handleSubmit')
     let { email, password } = formData;
     if (!email || !password) {
       return;
     }
-    console.log(email, password, 'handleSubmit in Register')
     onLogin(email, password);
     makeFormClear();
     evt.target.reset();

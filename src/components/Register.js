@@ -27,12 +27,10 @@ function Register({ onRegister, loggedIn }) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(formData, 'formData in handleSubmit')
-    let { email, password } = formData;
+    const { email, password } = formData;
     if (!email || !password) {
       return;
     }
-    console.log(email, password, 'handleSubmit in Register')
     onRegister(email, password);
     makeFormClear();
     evt.target.reset();

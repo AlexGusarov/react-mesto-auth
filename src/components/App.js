@@ -136,7 +136,7 @@ function App() {
   }, [loggedIn]);
 
 
-  async function registerUser(email, password) {
+  const registerUser = useCallback(async (email, password) => {
     try {
       setLoading(true);
       const data = await auth.register(email, password);
@@ -148,11 +148,12 @@ function App() {
     } catch (err) {
       setIsInfoToolTipOpen(true);
       setInfoToolTipStatus('failed');
+      setRegisterStatus(false);
     }
     finally {
       setLoading(false);
     }
-  }
+  }, [])
 
 
   const enterAccount = useCallback(async (login, password) => {
@@ -242,7 +243,6 @@ function App() {
               <Route path="*">
                 {loggedIn ? <Redirect to="/" /> : registerStatus ? <Redirect to="/sign-in" /> : null}
               </Route>
-
               <Footer />
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />

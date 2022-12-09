@@ -27,15 +27,10 @@ function App() {
   const [cards, setCards] = useState([]);
   const [isInfoToolTipOpen, setIsInfoToolTipOpen] = useState(false);
   const [infoToolTipStatus, setInfoToolTipStatus] = useState("");
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState({ email: '' });
   const token = localStorage.getItem('token');
-  const history = useHistory();
   const [registerStatus, setRegisterStatus] = useState(false);
-  // чтобы не было редиректа с Register на Login при обновлении страницы
-  const ROUTE_NO_AUTH = ['/sign-in', '/sign-up'];
-  const isRouteNoAuth = ROUTE_NO_AUTH.includes(location.pathname);
 
 
   function handleCardLike(card) {
@@ -243,10 +238,11 @@ function App() {
                   onCardDelete={handleCardDelete}
                 />
               </Switch>
+              {/* внутри Switch не работает */}
               <Route path="*">
-                {console.log(registerStatus, 'registerStatus')}
                 {loggedIn ? <Redirect to="/" /> : registerStatus ? <Redirect to="/sign-in" /> : null}
               </Route>
+
               <Footer />
               <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
